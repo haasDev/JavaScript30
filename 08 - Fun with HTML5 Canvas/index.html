@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+
+<body>
+  <canvas id="draw" width="800" height="800"></canvas>
+  <script>
+    const canvas = document.querySelector('#draw');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const ctx = canvas.getContext('2d')
+    ctx.strokeStyle = '#BADA55'
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    let lastX = 0;
+    let lastY = 0;
+    let hue = 0;
+    let lineDirection = true;
+
+    function draw({ offsetX, offsetY }) {
+      ctx.strokeStyle = `hsl(${hue++}, 100%, 50%)`;
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(offsetX, offsetY);
+      ctx.stroke();
+      [lastX, lastY] = [offsetX, offsetY];
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) lineDirection = !lineDirection;
+
+      if (lineDirection) {
+        ctx.lineWidth++;
+      } else {
+        ctx.lineWidth--;
+      }
+    }
+
+    canvas.addEventListener('mousedown', ({ offsetX, offsetY }) => {
+      canvas.addEventListener('mousemove', draw);
+      [lastX, lastY] = [offsetX, offsetY];
+    });
+    canvas.addEventListener('mouseup', () => canvas.removeEventListener('mousemove', draw));
+    canvas.addEventListener('mouseout', () => canvas.removeEventListener('mousemove', draw));
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
+
+</body>
+
+</html>

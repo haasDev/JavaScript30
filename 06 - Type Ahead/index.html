@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+  <script>
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+    const cities = [];
+    fetch(endpoint)
+      .then(res => res.json())
+      .then(data => cities.push(...data));
+
+    function displayMatches({ target: { value } }) {
+      const matchingLocations = filterOnSearchString(value, cities)
+      const html = matchingLocations.map(location => {
+        const regex = new RegExp(value, 'gi');
+        const highlightedCity = location.city.replace(regex, `<span class="hl">${value}</span>`)
+        const highlightedState = location.state.replace(regex, `<span class="hl">${value}</span>`)
+        return `
+          <li>
+            <span class="name">${highlightedCity}, ${highlightedState}</span>
+            <span class="population">${numberWithCommas(location.population)}</span>
+          </li>
+        `
+      }).join('')
+      suggestions.innerHTML = html
+    }
+
+    function filterOnSearchString(searchStr, cities) {
+      const searchRegex = new RegExp(searchStr, 'ig')
+      return cities.filter(location => location.city.match(searchRegex) || location.state.match(searchRegex))
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    }
+
+    const searchInput = document.querySelector('.search')
+    const suggestions = document.querySelector('.suggestions')
+
+    searchInput.addEventListener('change', displayMatches)
+    searchInput.addEventListener('keyup', displayMatches)
+  </script>
+</body>
+
+</html>
