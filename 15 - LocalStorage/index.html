@@ -68,6 +68,7 @@
 
     function createCheckbox(index) {
       const checkbox = document.createElement('input');
+      checkbox.setAttribute('id', `items${index}`);
       checkbox.setAttribute('type', 'checkbox');
       checkbox.setAttribute('data-index', index);
       return checkbox;
@@ -81,10 +82,11 @@
     }
 
     function deleteDish(target) {
-      const { index: deleteIndex } = target.closest('li').childNodes[1].dataset;
+      const li = target.closest('li');
+      const { index: deleteIndex } = li.childNodes[0].dataset;
       items.splice(deleteIndex, 1);
       saveToLocalStorage('items', items);
-      render(items);
+      li.parentElement.removeChild(li);
     }
 
     function handleItemsListClick({ target }) {
@@ -93,15 +95,6 @@
     }
 
     function render(dishes = []) {
-      /*
-      itemsList.innerHTML = dishes.map((dish, i) => `
-            <li>
-                <input type="checkbox" data-index=${i} id="item${i}" ${dish.done ? 'checked' : ''}>
-                <label for="item${i}">${dish.text}</label>
-                <button class="delete">X</button>
-            </li>
-        `).join('');
-      */
       const missingDishes = dishes.filter((dish, i) => {
         const li = document.querySelector(`.dish${i}`);
         return !li;
@@ -133,7 +126,6 @@
       const { index } = target.dataset;
       items[index].done = !items[index].done;
       saveToLocalStorage('items', items);
-      render(items);
     }
 
     addItems.addEventListener('submit', addItem);
