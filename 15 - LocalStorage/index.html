@@ -84,14 +84,24 @@
     function deleteDish(target) {
       const li = target.closest('li');
       const { index: deleteIndex } = li.childNodes[0].dataset;
-      items.splice(deleteIndex, 1);
+      items.splice(Number(deleteIndex), 1);
       saveToLocalStorage('items', items);
       li.parentElement.removeChild(li);
+      renameAttrs('[class^="dish"]');
     }
 
     function handleItemsListClick({ target }) {
       if (target.matches('input')) toggleDone(target);
       if (target.matches('button')) deleteDish(target);
+    }
+
+    function renameAttrs(selector) {
+      const elList = document.querySelectorAll(selector);
+      elList.forEach((el, i) => {
+        el.className = `dish${i}`;
+        el.childNodes[0].setAttribute('id', `items${i}`);
+        el.childNodes[1].setAttribute('for', `items${i}`);
+      })
     }
 
     function render(dishes = []) {
