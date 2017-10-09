@@ -34,7 +34,6 @@
     <h2>LOCAL TAPAS</h2>
     <p></p>
     <ul class="plates">
-      <li>Loading Tapas...</li>
     </ul>
     <form class="add-items">
       <input type="text" name="item" placeholder="Item Name" required>
@@ -60,6 +59,27 @@
       this.reset();
     }
 
+    function createButton() {
+      const button = document.createElement('button');
+      button.setAttribute('class', 'delete');
+      button.textContent = 'X';
+      return button;
+    }
+
+    function createCheckbox(index) {
+      const checkbox = document.createElement('input');
+      checkbox.setAttribute('type', 'checkbox');
+      checkbox.setAttribute('data-index', index);
+      return checkbox;
+    }
+
+    function createLabel(i, dish) {
+      const label = document.createElement('label');
+      label.setAttribute('for', `items${i}`);
+      label.textContent = dish.text;
+      return label;
+    }
+
     function deleteDish(target) {
       const { index: deleteIndex } = target.closest('li').childNodes[1].dataset;
       items.splice(deleteIndex, 1);
@@ -73,6 +93,7 @@
     }
 
     function render(dishes = []) {
+      /*
       itemsList.innerHTML = dishes.map((dish, i) => `
             <li>
                 <input type="checkbox" data-index=${i} id="item${i}" ${dish.done ? 'checked' : ''}>
@@ -80,6 +101,29 @@
                 <button class="delete">X</button>
             </li>
         `).join('');
+      */
+      const missingDishes = dishes.filter((dish, i) => {
+        const li = document.querySelector(`.dish${i}`);
+        return !li;
+      });
+
+      const dishesToRender = missingDishes.map((dish, i) => {
+        let listLength = document.querySelectorAll('[class^="dish"]').length;
+        console.log({ listLength })
+        if (listLength < 0) listLength = 0;
+        const index = listLength + i;
+        const li = document.createElement('li')
+        li.setAttribute('class', `dish${index}`);
+        const checkbox = createCheckbox(index);
+        const label = createLabel(index, dish);
+        const button = createButton();
+        li.appendChild(checkbox);
+        li.appendChild(label);
+        li.appendChild(button);
+        return li;
+      });
+
+      dishesToRender.forEach(dish => itemsList.appendChild(dish));
     }
 
     function saveToLocalStorage(key, data) {
