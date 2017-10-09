@@ -71,6 +71,7 @@
       checkbox.setAttribute('id', `items${index}`);
       checkbox.setAttribute('type', 'checkbox');
       checkbox.setAttribute('data-index', index);
+      if (items[index].done) checkbox.checked = true;
       return checkbox;
     }
 
