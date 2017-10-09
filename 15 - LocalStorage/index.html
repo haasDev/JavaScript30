@@ -108,8 +108,8 @@
       });
 
       let listLength = document.querySelectorAll('[class^="dish"]').length;
+      if (listLength < 0) listLength = 0;
       const dishesToRender = missingDishes.map((dish, i) => {
-        if (listLength < 0) listLength = 0;
         const index = listLength + i;
         const li = document.createElement('li')
         li.setAttribute('class', `dish${index}`);
